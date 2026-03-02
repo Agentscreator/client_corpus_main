@@ -3,12 +3,18 @@ import { db } from '@/db';
 import { bookings } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: RouteContext
 ) {
+  const params = await context.params;
+  const { id } = params;
+  
   try {
-    const { id } = await params;
     const bookingId = parseInt(id);
     
     if (isNaN(bookingId)) {
@@ -30,10 +36,11 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: RouteContext
 ) {
   try {
-    const { id } = await params;
+    const params = await context.params;
+    const { id } = params;
     const bookingId = parseInt(id);
     const body = await req.json();
     

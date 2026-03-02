@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     const ownerBookings = await db
       .select()
       .from(bookings)
-      .where(eq(bookings.siteOwnerId, siteOwner[0].id));
+      .where(eq(bookings.ownerId, siteOwner[0].id));
 
     return NextResponse.json({
       siteOwner: {
