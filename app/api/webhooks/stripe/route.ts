@@ -8,6 +8,9 @@ import Stripe from 'stripe';
 // Disable body parsing for webhook
 export const runtime = 'nodejs';
 
+const SITE_OWNER_EMAIL = 'agentverse884@gmail.com';
+const SITE_ID = 'site_0';
+
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const signature = req.headers.get('stripe-signature');
@@ -34,22 +37,29 @@ export async function POST(req: NextRequest) {
     case 'payment_intent.succeeded':
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       const bookingId = paymentIntent.metadata.bookingId;
+      const siteId = paymentIntent.metadata.siteId;
+      const ownerEmail = paymentIntent.metadata.ownerEmail;
 
-      if (bookingId) {
+      console.log(`Payment succeeded for booking ${bookingId} on ${siteId} (owner: ${ownerEmail})`);
+
+      if (bookingId && siteId === SITE_ID && ownerEmail === SITE_OWNER_EMAIL) {
         try {
           await db.update(bookings)
             .set({ status: 'paid' })
             .where(eq(bookings.id, parseInt(bookingId)));
-          console.log(`Booking ${bookingId} marked as paid`);
+          
+          console.log(`✅ Booking ${bookingId} marked as paid for ${SITE_OWNER_EMAIL}`);
         } catch (error) {
           console.error('Error updating booking status:', error);
         }
+      } else {
+        console.warn('Payment metadata mismatch or missing');
       }
       break;
 
     case 'payment_intent.payment_failed':
       const failedIntent = event.data.object as Stripe.PaymentIntent;
-      console.log('Payment failed:', failedIntent.id);
+      console.log('❌ Payment failed:', failedIntent.id, failedIntent.metadata);
       break;
 
     default:

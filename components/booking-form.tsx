@@ -14,6 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SERVICES } from '@/lib/constants';
 
 const bookingSchema = z.object({
   clientName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -24,17 +25,8 @@ const bookingSchema = z.object({
 
 type BookingFormData = z.infer<typeof bookingSchema>;
 
-const services = [
-  { name: 'Basic Manicure', price: 25 },
-  { name: 'Gel Manicure', price: 45 },
-  { name: 'Basic Pedicure', price: 35 },
-  { name: 'Gel Pedicure', price: 55 },
-  { name: 'Acrylic Full Set', price: 65 },
-  { name: 'Nail Art', price: 15 },
-];
-
 export function BookingForm() {
-  const [selectedService, setSelectedService] = useState<typeof services[0] | null>(null);
+  const [selectedService, setSelectedService] = useState<typeof SERVICES[number] | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<BookingFormData>({
@@ -51,12 +43,11 @@ export function BookingForm() {
 
     setIsSubmitting(true);
     try {
-      // Create booking
+      // Create booking - will be automatically linked to site owner
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: null, // Guest booking - can be updated with auth later
           clientName: data.clientName,
           clientEmail: data.clientEmail,
           service: selectedService.name,
@@ -122,7 +113,7 @@ export function BookingForm() {
             <Label htmlFor="service">Service</Label>
             <Select
               onValueChange={(value) => {
-                const service = services.find(s => s.name === value);
+                const service = SERVICES.find(s => s.name === value);
                 setSelectedService(service || null);
                 setValue('service', value);
               }}
@@ -131,8 +122,8 @@ export function BookingForm() {
                 <SelectValue placeholder="Select a service" />
               </SelectTrigger>
               <SelectContent>
-                {services.map((service) => (
-                  <SelectItem key={service.name} value={service.name}>
+                {SERVICES.map((service) => (
+                  <SelectItem key={service.id} value={service.name}>
                     {service.name} - ${service.price}
                   </SelectItem>
                 ))}

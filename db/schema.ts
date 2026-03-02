@@ -13,7 +13,8 @@ export const users = pgTable('users', {
 
 export const bookings = pgTable('bookings', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => users.id), // Made optional for guest bookings
+  siteId: text('site_id').notNull().default('site_0'), // Site identifier
+  ownerId: integer('owner_id').references(() => users.id), // Site owner (agentverse884@gmail.com)
   clientName: text('client_name').notNull(),
   clientEmail: text('client_email').notNull(),
   service: text('service').notNull(),

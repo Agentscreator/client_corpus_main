@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { db } from '@/db';
-import { bookings } from '@/db/schema';
+import { bookings, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+
+const SITE_OWNER_EMAIL = 'agentverse884@gmail.com';
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,6 +21,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
     }
 
+    const booking = existingBooking[0];
+
+    // Get site owner for Stripe account
+    const owner = await db.select().from(users).where(eq(users.email, SITE_OWNER_EMAIL)).limit(1);
+
     // Create a PaymentIntent with Stripe
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount * 100), // Convert to cents
@@ -28,7 +35,13 @@ export async function POST(req: NextRequest) {
       },
       metadata: {
         bookingId: bookingId.toString(),
+        siteId: 'site_0',
+        ownerEmail: SITE_OWNER_EMAIL,
+        clientName: booking.clientName,
+        clientEmail: booking.clientEmail,
+        service: booking.service,
       },
+      description: `Booking for ${booking.service} - ${booking.clientName}`,
     });
 
     // Update booking with payment intent ID
