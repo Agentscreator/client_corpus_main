@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { SERVICES } from '@/lib/constants';
+import { SERVICES, type Service } from '@/lib/constants';
 
 const bookingSchema = z.object({
   clientName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -26,7 +26,7 @@ const bookingSchema = z.object({
 type BookingFormData = z.infer<typeof bookingSchema>;
 
 export function BookingForm() {
-  const [selectedService, setSelectedService] = useState<typeof SERVICES[number] | null>(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<BookingFormData>({
@@ -112,8 +112,8 @@ export function BookingForm() {
           <div className="space-y-2">
             <Label htmlFor="service">Service</Label>
             <Select
-              onValueChange={(value) => {
-                const service = SERVICES.find(s => s.name === value);
+              onValueChange={(value: string) => {
+                const service = SERVICES.find((s: Service) => s.name === value);
                 setSelectedService(service || null);
                 setValue('service', value);
               }}
@@ -122,7 +122,7 @@ export function BookingForm() {
                 <SelectValue placeholder="Select a service" />
               </SelectTrigger>
               <SelectContent>
-                {SERVICES.map((service) => (
+                {SERVICES.map((service: Service) => (
                   <SelectItem key={service.id} value={service.name}>
                     {service.name} - ${service.price}
                   </SelectItem>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { bookings, users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import bcrypt from 'bcryptjs';
 
 // Site owner email - all bookings belong to this user
 const SITE_OWNER_EMAIL = 'agentverse884@gmail.com';
@@ -17,10 +18,11 @@ export async function POST(req: NextRequest) {
     
     if (!owner.length) {
       // Create site owner if doesn't exist
+      const hashedPassword = await bcrypt.hash('change-me-in-production', 10);
       const newOwner = await db.insert(users).values({
         name: 'Site Owner',
         email: SITE_OWNER_EMAIL,
-        password: 'placeholder', // Should be hashed in production
+        password: hashedPassword,
         stripeConnected: false,
       }).returning();
       owner = newOwner;
