@@ -1184,14 +1184,14 @@
   resolved "https://registry.yarnpkg.com/@radix-ui/rect/-/rect-1.1.1.tgz#78244efe12930c56fd255d7923865857c41ac8cb"
   integrity sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==
 
-"@stripe/react-stripe-js@^2.10.0":
+"@stripe/react-stripe-js@^5.6.0":
   version "5.6.0"
   resolved "https://registry.yarnpkg.com/@stripe/react-stripe-js/-/react-stripe-js-5.6.0.tgz#0e8fa984d3b982adf57a9bb81c9445e6d1dc0478"
   integrity sha512-tucu/vTGc+5NXbo2pUiaVjA4ENdRBET8qGS00BM4BAU8J4Pi3eY6BHollsP2+VSuzzlvXwMg0it3ZLhbCj2fPg==
   dependencies:
     prop-types "^15.7.2"
 
-"@stripe/stripe-js@^4.11.0":
+"@stripe/stripe-js@^8.8.0":
   version "8.8.0"
   resolved "https://registry.yarnpkg.com/@stripe/stripe-js/-/stripe-js-8.8.0.tgz#6c691c78fc127ee06d5b5fff36e96fee90fecdd6"
   integrity sha512-NNYuyW8qmLjyHnpyFgs/23wUrjB8k0xN9YIZFOMLewCa/pIkIji9e9aY/EgdNryEDDRptc6TcPIHRvG1R0ClFw==
