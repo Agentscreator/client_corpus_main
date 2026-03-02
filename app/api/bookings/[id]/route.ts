@@ -5,10 +5,11 @@ import { eq } from 'drizzle-orm';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const bookingId = parseInt(params.id);
+    const { id } = await params;
+    const bookingId = parseInt(id);
     
     if (isNaN(bookingId)) {
       return NextResponse.json({ error: 'Invalid booking ID' }, { status: 400 });
@@ -29,10 +30,11 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const bookingId = parseInt(params.id);
+    const { id } = await params;
+    const bookingId = parseInt(id);
     const body = await req.json();
     
     if (isNaN(bookingId)) {
